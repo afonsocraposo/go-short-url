@@ -1,8 +1,9 @@
 package helpers
 
 import (
-    "fmt"
 	"context"
+	"fmt"
+	"time"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -14,7 +15,7 @@ var client = redis.NewClient(&redis.Options{
 var ctx = context.Background()
 
 func SetVar(key string, value string) {
-    err := client.Set(ctx, key, value, 0).Err()
+    err := client.Set(ctx, key, value, 24 * time.Hour).Err()
     if  err != nil {
         panic(err)
     }
