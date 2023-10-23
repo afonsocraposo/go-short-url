@@ -1,22 +1,24 @@
 package handlers
 
 import (
-	"fmt"
-	"net/http"
+    "fmt"
+    "net/http"
     "net/url"
-	"shorturl/internal/helpers"
-	"strings"
+    "shorturl/internal/helpers"
+    "strings"
 )
+
+const Size int = 16
 
 func ShortUrlHandler(w http.ResponseWriter, r *http.Request) {
     switch r.Method {
-	case http.MethodGet:
+    case http.MethodGet:
         getUrl(w, r)
-	case http.MethodPost:
+    case http.MethodPost:
         generateShortUrl(w, r)
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
+    default:
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+    }
 }
 
 func getUrl(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +26,19 @@ func getUrl(w http.ResponseWriter, r *http.Request) {
     parts := strings.Split(path, "/")
     if len(parts) == 2 {
         id := parts[1]
-        url := helpers.GetVar(id)
+        if len(id) != Size {
+            http.Error(w, "Invalid URL format", http.StatusBadRequest)
+            return
+        }
+        url, err := helpers.GetVar(id)
+        if url == "" {
+            if err == nil {
+                http.Error(w, "URL not found", http.StatusNotFound)
+            } else {
+                http.Error(w, "Something went wrong", http.StatusInternalServerError)
+            }
+            return
+        }
         http.Redirect(w, r, url, 301)
     } else {
         http.Error(w, "Invalid URL format", http.StatusBadRequest)
@@ -38,21 +52,25 @@ func isUrl(str string) bool {
 
 func generateShortUrl(w http.ResponseWriter, r *http.Request) {
     err := r.ParseForm()
-   if err != nil {
-       http.Error(w, "Failed to parse form", http.StatusBadRequest)
-       return
-   }
+    if err != nil {
+        http.Error(w, "Failed to parse form", http.StatusBadRequest)
+        return
+    }
 
-   url := r.FormValue("url")
+    url := r.FormValue("url")
 
-   if !isUrl(url) {
+    if !isUrl(url) {
         http.Error(w, "Invalid URL format", http.StatusBadRequest)
         return
-   }
+    }
 
-   hash := helpers.HashString(url, 0)
+    hash := helpers.HashString(url, Size)
 
-   helpers.SetVar(hash, url)
+    err = helpers.SetVar(hash, url)
+    if err != nil {
+        http.Error(w, "Something went wrong", http.StatusInternalServerError)
+        return
+    }
 
-   fmt.Fprintf(w, "http://localhost:8080/%s", hash)
+    fmt.Fprintf(w, "http://localhost:8080/%s", hash)
 }

@@ -6,5 +6,5 @@ import (
 )
 
 func FooBar(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, "bar")
+    fmt.Fprint(w, "bar")
 }
