@@ -4,7 +4,7 @@ import (
     "fmt"
     "net/http"
     "net/url"
-    "shorturl/internal/helpers"
+    "github.com/afonsocraposo/go-short-url/internal/helpers"
     "strings"
 )
 

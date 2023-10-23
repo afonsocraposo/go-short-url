@@ -3,7 +3,7 @@ package main
 import (
     "fmt"
     "net/http"
-    "shorturl/internal/handlers"
+    "github.com/afonsocraposo/go-short-url/internal/handlers"
 )
 
 func main() {
