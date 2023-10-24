@@ -10,7 +10,7 @@ import (
     "strings"
 )
 
-const Size int = 16
+const Size int = 5
 
 func ShortUrlHandler(w http.ResponseWriter, r *http.Request) {
     switch r.Method {
