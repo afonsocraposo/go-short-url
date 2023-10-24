@@ -1,6 +1,8 @@
 package handlers
 
 import (
+    "os"
+    "errors"
     "fmt"
     "net/http"
     "net/url"
@@ -13,7 +15,7 @@ const Size int = 16
 func ShortUrlHandler(w http.ResponseWriter, r *http.Request) {
     switch r.Method {
     case http.MethodGet:
-        getUrl(w, r)
+        getHandler(w, r)
     case http.MethodPost:
         generateShortUrl(w, r)
     default:
@@ -21,31 +23,42 @@ func ShortUrlHandler(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func getUrl(w http.ResponseWriter, r *http.Request) {
+func getHandler(w http.ResponseWriter, r *http.Request) {
     path := r.URL.Path
+    fp := "./internal/static" + path
+
     parts := strings.Split(path, "/")
-    if len(parts) == 2 {
-        id := parts[1]
-        if len(id) != Size {
-            http.Error(w, "Invalid URL format", http.StatusBadRequest)
+
+    switch len(parts) {
+    case 2:
+        fallthrough
+    case 3:
+        _, err := os.Stat(fp)
+        if errors.Is(err, os.ErrNotExist) {
+            id := parts[1]
+            getUrl(w, r, id)
             return
         }
-        url, err := helpers.GetVar(id)
-        if url == "" {
-            if err == nil {
-                http.Error(w, "URL not found", http.StatusNotFound)
-            } else {
-                http.Error(w, "Something went wrong", http.StatusInternalServerError)
-            }
-            return
-        }
-        http.Redirect(w, r, url, 301)
-    } else {
-        http.Error(w, "Invalid URL format", http.StatusBadRequest)
+        fallthrough
+    default:
+        http.ServeFile(w, r, fp)
     }
 }
 
-func isUrl(str string) bool {
+func getUrl(w http.ResponseWriter, r *http.Request, id string) {
+    if len(id) != Size {
+        http.Redirect(w, r, "/", 301)
+        return
+    }
+    url, _ := helpers.GetVar(id)
+    if url == "" {
+        http.Redirect(w, r, "/", 301)
+        return
+    }
+    http.Redirect(w, r, url, 301)
+}
+
+func isUrlValid(str string) bool {
     u, err := url.Parse(str)
     return err == nil && u.Scheme != "" && u.Host != ""
 }
@@ -59,7 +72,7 @@ func generateShortUrl(w http.ResponseWriter, r *http.Request) {
 
     url := r.FormValue("url")
 
-    if !isUrl(url) {
+    if !isUrlValid(url) {
         http.Error(w, "Invalid URL format", http.StatusBadRequest)
         return
     }

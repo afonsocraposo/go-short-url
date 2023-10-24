@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>go-short-url</title>
+        <meta charset="UTF-8"/>
+        <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    </head>
+    <body hx-boost="true">
+        <section>
+            <h1>Go Short URL</h1>
+            <form method="POST" hx-post="/", hx-target="#short-url">
+                <input type="text" name="url" placeholder="Insert URL" value="https://afonsoraposo.com" size="30">
+                <button type="submit">Submit</button>
+            </form>
+            <div id="error-message">
+            </div>
+            <a id="short-url">
+            </a>
+            <button id='copy-btn' onclick="copyToClipboard()" style="display:none">Copy</button>
+            </div>
+        </section>
+        <script>
+            const a = document.getElementById("short-url");
+            const btn = document.getElementById("copy-btn");
+            const errorMessage = document.getElementById("error-message");
+            htmx.on("htmx:afterSwap", function(evt) {
+                btn.style.display = "inline";
+                a.href = a.innerText;
+                btn.innerText = "Copy";
+            })
+            htmx.on("htmx:responseError", function(evt) {
+                const error = evt.detail.xhr.response.trim();
+                errorMessage.innerText = error;
+                btn.style.display = "none";
+                a.innerText = "";
+            })
+
+            function copyToClipboard() {
+                navigator.clipboard.writeText(a.innerText);
+                btn.innerText = "Copied!";
+            }
+        </script>
+    </body>
+</html>
