@@ -2,7 +2,7 @@
 
 ## Overview
 
-`go-short-url` is a URL shortener service written in Go (Golang). This project makes it easy to shorten URLs for easier sharing and management, while also offering retrieval of original URLs based on their shortened versions. It runs on a lightweight HTTP server on port 8080.
+`go-short-url` is a URL shortener service written in Go (Golang) with an HTMX frontend. This project makes it easy to shorten URLs for easier sharing and management, while also offering retrieval of original URLs based on their shortened versions. It runs on a lightweight HTTP server on port 8080 with a simple frontend.
 
 ## Features
 
@@ -21,33 +21,10 @@ To get started, clone the repository and navigate into its directory:
 ```bash
 git clone https://github.com/yourusername/go-short-url.git
 cd go-short-url
+docker-compose up -d
 ```
 
-### Installing Dependencies
-
-This project has no external dependencies.
-
-### Building the Project
-
-Compile the code:
-
-```bash
-go build .
-```
-
-### Running the Server
-
-Execute the binary:
-
-```bash
-./go-short-url
-```
-
-If everything is set up correctly, you should see:
-
-```
-Server is running on port 8080
-```
+Go to: http://127.0.0.1:8080
 
 ## API Endpoints
 
