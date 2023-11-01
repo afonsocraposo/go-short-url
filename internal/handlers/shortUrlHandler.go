@@ -85,5 +85,5 @@ func generateShortUrl(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    fmt.Fprintf(w, "http://localhost:8080/%s", hash)
+    fmt.Fprintf(w, "http://127.0.0.1:8080/%s", hash)
 }

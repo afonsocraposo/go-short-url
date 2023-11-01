@@ -56,7 +56,7 @@ Server is running on port 8080
 To shorten a URL, make a POST request to the root `/`:
 
 ```bash
-curl -d "url=http://example.com" -X POST http://localhost:8080/
+curl -d "url=http://example.com" -X POST http://127.0.0.1:8080/
 ```
 
 ### Retrieve a URL (`GET`)
@@ -64,7 +64,7 @@ curl -d "url=http://example.com" -X POST http://localhost:8080/
 To retrieve the original URL, navigate to the shortened URL in your browser or use a GET request. For example:
 
 ```bash
-curl http://localhost:8080/{hash}
+curl http://127.0.0.1:8080/{hash}
 ```
 
 ## Error Handling
