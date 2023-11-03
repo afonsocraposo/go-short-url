@@ -12,7 +12,7 @@ func HashString(value string, size int) string {
     h := sha256.New()
     h.Write([]byte(value))
     bs := h.Sum(nil)
-    hash := base64.StdEncoding.EncodeToString(bs[:])
+    hash := base64.URLEncoding.EncodeToString(bs[:])
     return hash[:size]
 }
 
