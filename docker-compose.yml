@@ -13,6 +13,8 @@ services:
       - "8080:8080"
     networks:
       - my-custom-network
+    depends_on:
+      - redis
 
 networks:
   my-custom-network:
